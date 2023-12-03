@@ -9,8 +9,8 @@ internal class Day01 : Problem
 
         foreach (var value in calibrationValues)
         {
-            char firstDigit = '0';
-            char lastDigit = '0';
+            int firstDigit = 0;
+            int lastDigit = 0;
 
             bool firstDigitFound = false;
 
@@ -20,16 +20,16 @@ internal class Day01 : Problem
                 {
                     if (!firstDigitFound)
                     {
-                        firstDigit = character;
-                        lastDigit = character;
+                        firstDigit = (int)char.GetNumericValue(character);
+                        lastDigit = firstDigit;
                         firstDigitFound = true;
                     }
 
-                    lastDigit = character;
+                    lastDigit = (int)char.GetNumericValue(character);
                 }
             }
 
-            var calculation = (int)(10 * char.GetNumericValue(firstDigit) + char.GetNumericValue(lastDigit));
+            var calculation = 10 * firstDigit + lastDigit;
             calculations.Add(calculation);
         }
 
