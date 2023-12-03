@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="AdventOfCode.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="2023\D01\input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
