@@ -1,8 +1,8 @@
 ﻿namespace AdventOfCode.Y2023.D01;
 
-internal class Day01 : Problem
+internal class Day01 : Problem<int>
 {
-    public override async ValueTask SolveAsync()
+    public override async ValueTask<int> SolveAsync()
     {
         var calibrationValues = await File.ReadAllLinesAsync(Path.Combine(Environment.CurrentDirectory, "2023", "D01", "input.txt"));
         var calculations = new List<int>(capacity: calibrationValues.Length);
@@ -13,7 +13,7 @@ internal class Day01 : Problem
             calculations.Add(calculation);
         }
 
-        Console.WriteLine($"Result: {calculations.Sum()}");
+        return calculations.Sum();
     }
 
     private readonly Dictionary<int, string> _letters = new()

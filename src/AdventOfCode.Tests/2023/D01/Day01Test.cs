@@ -4,6 +4,15 @@ namespace AdventOfCode.Tests.Y2023.D01;
 
 public class Day01Test
 {
+    [Fact]
+    public async Task ShouldSolveProblem()
+    {
+        var sut = new Day01();
+        var result = await sut.SolveAsync();
+
+        Assert.Equal(55413, result);
+    }
+
     [Theory]
     [InlineData("51591twosix4dhsxvgghxq", 54)]
     [InlineData("425nine", 49)]
@@ -17,7 +26,7 @@ public class Day01Test
     [InlineData("4nineeightseven2", 42)]
     [InlineData("zoneight234", 14)]
     [InlineData("7pqrstsixteen", 76)]
-    public void CalculateResult(string input, int expectedResult)
+    public void ShouldCalculateResult(string input, int expectedResult)
     {
         var sut = new Day01();
         var result = sut.CalculateResult(input);

@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode;
 
-internal abstract class Problem
+internal abstract class Problem<TResult>
 {
-    public abstract ValueTask SolveAsync();
+    public abstract ValueTask<TResult> SolveAsync();
 }
