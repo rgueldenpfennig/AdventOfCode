@@ -6,8 +6,11 @@ internal class Day02 : Problem<int>
 
     internal record Draw(int Blue = 0, int Green = 0, int Red = 0);
 
-    public override ValueTask<int> SolveAsync()
+    public override async ValueTask<int> SolveAsync()
     {
+        var gameInputs = await File.ReadAllLinesAsync(Path.Combine(Environment.CurrentDirectory, "2023", "D02", "input.txt"));
+        var games = new List<Game>
+
         return new ValueTask<int>(0);
     }
 
