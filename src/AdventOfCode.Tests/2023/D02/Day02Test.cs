@@ -14,10 +14,19 @@ public class Day02Test
     }
 
     [Fact]
-    public async Task ShouldSolve()
+    public async Task ShouldSolveSecondPart()
     {
         var sut = new Day02();
         var result = await sut.SolveAsync();
+
+        Assert.Equal(78_111, result);
+    }
+
+    [Fact]
+    public async Task ShouldSolveFirstPart()
+    {
+        var sut = new Day02();
+        var result = await sut.SolveFirstPartAsync();
 
         Assert.Equal(2545, result);
     }

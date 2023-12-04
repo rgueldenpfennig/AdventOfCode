@@ -8,6 +8,23 @@ internal class Day02 : Problem<int>
 
     public override async ValueTask<int> SolveAsync()
     {
+        var games = await GetGamesFromInputAsync();
+        return SumPowerOfMinimumCubes(games);
+    }
+
+    public async ValueTask<int> SolveFirstPartAsync()
+    {
+        var games = await GetGamesFromInputAsync();
+
+        var red = 12;
+        var green = 13;
+        var blue = 14;
+
+        return SumPossibleGames(games, red, green, blue);
+    }
+
+    private async ValueTask<List<Game>> GetGamesFromInputAsync()
+    {
         var gameInputs = await File.ReadAllLinesAsync(Path.Combine(Environment.CurrentDirectory, "2023", "D02", "input.txt"));
         var games = new List<Game>(capacity: gameInputs.Length);
 
@@ -16,11 +33,7 @@ internal class Day02 : Problem<int>
             games.Add(ParseGame(gameInput));
         }
 
-        var red = 12;
-        var green = 13;
-        var blue = 14;
-
-        return SumPossibleGames(games, red, green, blue);
+        return games;
     }
 
     internal Game ParseGame(string input)
@@ -153,5 +166,27 @@ internal class Day02 : Problem<int>
         }
 
         return sumIds;
+    }
+
+    internal static int SumPowerOfMinimumCubes(IList<Game> games)
+    {
+        var powerResults = new List<int>(capacity: games.Count);
+        foreach (var game in games)
+        {
+            var minRed = 0;
+            var minGreen = 0;
+            var minBlue = 0;
+
+            foreach (var draw in game.Draws)
+            {
+                minRed = Math.Max(minRed, draw.Red);
+                minGreen = Math.Max(minGreen, draw.Green);
+                minBlue = Math.Max(minBlue, draw.Blue);
+            }
+
+            powerResults.Add(minRed * minGreen * minBlue);
+        }
+
+        return powerResults.Sum();
     }
 }
