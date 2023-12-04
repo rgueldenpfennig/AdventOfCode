@@ -8,6 +8,8 @@ public class Day04Test
     public async Task ShouldSolveFirstPart()
     {
         var sut = new Day04();
-        var result = sut.SolveFirstPartAsync();
+        var result = await sut.SolveFirstPartAsync();
+
+        Assert.Equal(32_609, result);
     }
 }

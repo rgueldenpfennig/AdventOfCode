@@ -7,7 +7,22 @@ internal class Day04 : Problem<int>
     public override async ValueTask<int> SolveFirstPartAsync()
     {
         var cards = await GetCardsFromInputAsync();
-        return 0;
+        var points = 0;
+
+        foreach (var card in cards)
+        {
+            var intersect = card.WinningNumbers.Intersect(card.OwnedNumbers).ToArray();
+            if (intersect.Length == 1)
+            {
+                points++;
+            }
+            else if (intersect.Length > 0)
+            {
+                points += Convert.ToInt32(Math.Pow(2, intersect.Length - 1));
+            }
+        }
+
+        return points;
     }
 
     internal async ValueTask<List<Card>> GetCardsFromInputAsync()
