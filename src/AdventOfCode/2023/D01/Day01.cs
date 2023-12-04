@@ -2,7 +2,7 @@
 
 internal class Day01 : Problem<int>
 {
-    public override async ValueTask<int> SolveAsync()
+    public override async ValueTask<int> SolveSecondPartAsync()
     {
         var calibrationValues = await File.ReadAllLinesAsync(Path.Combine(Environment.CurrentDirectory, "2023", "D01", "input.txt"));
         var calculations = new List<int>(capacity: calibrationValues.Length);

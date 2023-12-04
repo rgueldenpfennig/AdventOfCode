@@ -6,13 +6,13 @@ internal class Day02 : Problem<int>
 
     internal record Draw(int Blue = 0, int Green = 0, int Red = 0);
 
-    public override async ValueTask<int> SolveAsync()
+    public override async ValueTask<int> SolveSecondPartAsync()
     {
         var games = await GetGamesFromInputAsync();
         return SumPowerOfMinimumCubes(games);
     }
 
-    public async ValueTask<int> SolveFirstPartAsync()
+    public override async ValueTask<int> SolveFirstPartAsync()
     {
         var games = await GetGamesFromInputAsync();
 
