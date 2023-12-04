@@ -19,6 +19,6 @@ public class Day04Test
         var sut = new Day04();
         var result = await sut.SolveSecondPartAsync();
 
-        Assert.Equal(32_609, result);
+        Assert.Equal(14_624_680, result);
     }
 }

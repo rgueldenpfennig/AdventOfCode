@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Microsoft.CSharp.RuntimeBinder;
 
 namespace AdventOfCode.Y2023.D04;
 
@@ -41,7 +40,7 @@ internal class Day04 : Problem<int>
             var card = cards[index];
             Debug.WriteLine($"Card: {card.Id} Matches: {card.Matches} Index: {index} Count: {card.Count}");
 
-            var wonCards = card.Matches * card.Count;
+            var wonCards = card.Matches;
             if (wonCards > 0)
             {
                 var i = index + 1;
@@ -52,7 +51,7 @@ internal class Day04 : Problem<int>
                     var nextWonCard = cards[i];
                     i++;
 
-                    nextWonCard.Count++;
+                    nextWonCard.Count += card.Count;
                     wonCards--;
                 }
             }
@@ -61,11 +60,11 @@ internal class Day04 : Problem<int>
             if (index == cards.Count) break;
         }
 
-        var sum = cards.Sum(c => c.Count * c.Matches);
+        var sum = cards.Sum(c => c.Count);
         return sum;
     }
 
-    internal async ValueTask<List<Card>> GetCardsFromInputAsync()
+    internal static async ValueTask<List<Card>> GetCardsFromInputAsync()
     {
         var cardInputs = await File.ReadAllLinesAsync(Path.Combine(Environment.CurrentDirectory, "2023", "D04", "input.txt"));
         var cards = new List<Card>(capacity: cardInputs.Length);
