@@ -2,16 +2,76 @@
 
 internal class Day02 : Problem<int>
 {
-    internal record Game(int Id, Draw[] Draws);
+    internal record Game(int Id, IList<Draw> Draws);
 
     internal record Draw(int Blue = 0, int Green = 0, int Red = 0);
 
     public override async ValueTask<int> SolveAsync()
     {
         var gameInputs = await File.ReadAllLinesAsync(Path.Combine(Environment.CurrentDirectory, "2023", "D02", "input.txt"));
-        var games = new List<Game>
+        var games = new List<Game>(capacity: gameInputs.Length);
 
-        return new ValueTask<int>(0);
+        foreach (var gameInput in gameInputs)
+        {
+            games.Add(ParseGame(gameInput));
+        }
+
+        var red = 12;
+        var green = 13;
+        var blue = 14;
+
+        return SumPossibleGames(games, red, green, blue);
+    }
+
+    internal Game ParseGame(string input)
+    {
+        // Game 1: 20 green, 3 red, 2 blue; 9 red, 16 blue, 18 green; 6 blue, 19 red, 10 green; 12 red, 19 green, 11 blue
+        var span = input.AsSpan();
+        var gameIndexLeft = input.IndexOf(' ') + 1;
+        var gameIndexRight = input.IndexOf(':');
+
+        var gameId = Convert.ToInt32(span[gameIndexLeft..gameIndexRight].ToString());
+        gameIndexRight++;
+
+        var draws = new List<Draw>();
+        var drawsRaw = span[gameIndexRight..].ToString();
+        foreach (var drawRaw in drawsRaw.Split(';'))
+        {
+            var cubes = drawRaw.Split(',', StringSplitOptions.TrimEntries);
+
+            int blue = 0;
+            int green = 0;
+            int red = 0;
+
+            foreach (var cube in cubes)
+            {
+                var cubeSpan = cube.AsSpan();
+                var cubeIndex = cubeSpan.IndexOf(' ');
+                var count = Convert.ToInt32(cubeSpan[..cubeIndex].ToString());
+
+                cubeIndex++;
+                var color = cubeSpan[cubeIndex..].ToString();
+
+                switch (color)
+                {
+                    case "green":
+                        green = count;
+                        break;
+                    case "blue":
+                        blue = count;
+                        break;
+                    case "red":
+                        red = count;
+                        break;
+                    default:
+                        throw new InvalidOperationException();
+                }
+            }
+
+            draws.Add(new Draw(blue, green, red));
+        }
+
+        return new Game(gameId, draws);
     }
 
     internal int SolveSample()
@@ -74,7 +134,7 @@ internal class Day02 : Problem<int>
         return SumPossibleGames(games, red, green, blue);
     }
 
-    internal static int SumPossibleGames(Game[] games, int reds, int greens, int blues)
+    internal static int SumPossibleGames(IList<Game> games, int reds, int greens, int blues)
     {
         var sumIds = 0;
         foreach (var game in games)
