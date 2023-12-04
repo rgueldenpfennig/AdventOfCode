@@ -1,8 +1,14 @@
-﻿namespace AdventOfCode.Y2023.D04;
+﻿using System.Diagnostics;
+using Microsoft.CSharp.RuntimeBinder;
+
+namespace AdventOfCode.Y2023.D04;
 
 internal class Day04 : Problem<int>
 {
-    internal record Card(int Id, int[] WinningNumbers, int[] OwnedNumbers);
+    internal record Card(int Id, int[] WinningNumbers, int[] OwnedNumbers, int Matches = 0)
+    {
+        public int Count { get; set; } = 1;
+    }
 
     public override async ValueTask<int> SolveFirstPartAsync()
     {
@@ -23,6 +29,40 @@ internal class Day04 : Problem<int>
         }
 
         return points;
+    }
+
+    public override async ValueTask<int> SolveSecondPartAsync()
+    {
+        var cards = await GetCardsFromInputAsync();
+        var index = 0;
+
+        while (true)
+        {
+            var card = cards[index];
+            Debug.WriteLine($"Card: {card.Id} Matches: {card.Matches} Index: {index} Count: {card.Count}");
+
+            var wonCards = card.Matches * card.Count;
+            if (wonCards > 0)
+            {
+                var i = index + 1;
+                while (wonCards > 0)
+                {
+                    if (i == cards.Count) break;
+
+                    var nextWonCard = cards[i];
+                    i++;
+
+                    nextWonCard.Count++;
+                    wonCards--;
+                }
+            }
+
+            index++;
+            if (index == cards.Count) break;
+        }
+
+        var sum = cards.Sum(c => c.Count * c.Matches);
+        return sum;
     }
 
     internal async ValueTask<List<Card>> GetCardsFromInputAsync()
@@ -53,6 +93,11 @@ internal class Day04 : Problem<int>
         var winningNumbers = winningNumbersRaw.Select(s => Convert.ToInt32(s)).ToArray();
         var ownedNumbers = ownedNumbersRaw.Select(s => Convert.ToInt32(s)).ToArray();
 
-        return new Card(cardId, winningNumbers, ownedNumbers);
+        var card = new Card(cardId, winningNumbers, ownedNumbers)
+        {
+            Matches = winningNumbers.Intersect(ownedNumbers).Count()
+        };
+
+        return card;
     }
 }

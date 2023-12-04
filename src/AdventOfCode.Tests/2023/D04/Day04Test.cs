@@ -12,4 +12,13 @@ public class Day04Test
 
         Assert.Equal(32_609, result);
     }
+
+    [Fact]
+    public async Task ShouldSolveSecondPart()
+    {
+        var sut = new Day04();
+        var result = await sut.SolveSecondPartAsync();
+
+        Assert.Equal(32_609, result);
+    }
 }
