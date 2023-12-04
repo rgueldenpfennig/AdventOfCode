@@ -1,0 +1,13 @@
+﻿using AdventOfCode.Y2023.D04;
+
+namespace AdventOfCode.Tests.Y2023.D04;
+
+public class Day04Test
+{
+    [Fact]
+    public async Task ShouldSolveFirstPart()
+    {
+        var sut = new Day04();
+        var result = sut.SolveFirstPartAsync();
+    }
+}

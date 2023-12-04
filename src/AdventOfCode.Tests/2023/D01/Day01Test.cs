@@ -8,7 +8,7 @@ public class Day01Test
     public async Task ShouldSolveProblem()
     {
         var sut = new Day01();
-        var result = await sut.SolveAsync();
+        var result = await sut.SolveSecondPartAsync();
 
         Assert.Equal(55413, result);
     }
