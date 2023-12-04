@@ -1,4 +1,4 @@
-﻿using AdventOfCode.Y2023.D01;
+﻿using AdventOfCode.Y2023.D02;
 
-var problem = new Day01();
+var problem = new Day02();
 await problem.SolveAsync();
