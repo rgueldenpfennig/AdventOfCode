@@ -5,10 +5,12 @@ namespace AdventOfCode.Y2023.D05;
 
 internal class Day05 : Problem<ulong>
 {
-    internal record Seed(int Id, ulong Start, ulong Length);
+    internal record struct Seed(int Id, ulong Start, ulong Length);
 
-    internal record Range(ulong DestinationRangeStart, ulong SourceRangeStart, ulong RangeLength)
+    internal record struct Range(ulong DestinationRangeStart, ulong SourceRangeStart, ulong RangeLength)
     {
+        public static readonly Range Default = new ();
+
         public ulong MaxSourceRange { get; } = SourceRangeStart + (RangeLength - 1);
 
         public ulong MaxDestinationRange { get; } = DestinationRangeStart + (RangeLength - 1);
@@ -24,7 +26,7 @@ internal class Day05 : Problem<ulong>
         public ulong MapToDestination(ulong source)
         {
             var range = GetMatchingRange(source);
-            if (range is null)
+            if (range == Range.Default)
                 return source;
 
             if (range.SourceRangeStart == source)
@@ -37,7 +39,7 @@ internal class Day05 : Problem<ulong>
             return range.DestinationRangeStart + sourceDiff;
         }
 
-        private Range? GetMatchingRange(ulong source)
+        private Range GetMatchingRange(ulong source)
         {
             return Ranges.FirstOrDefault(r => r.IsMatch(source));
         }
