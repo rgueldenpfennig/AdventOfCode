@@ -14,6 +14,15 @@ public class Day06Test
         Assert.Equal(288U, result);
     }
 
+    [Fact]
+    public async Task ShouldSolveFirstPart()
+    {
+        var sut = new Day06();
+        var result = await sut.SolveFirstPartAsync(CancellationToken.None);
+
+        Assert.Equal(2_756_160U, result);
+    }
+
     [Theory]
     [InlineData(7, 9, 0, 0)]
     [InlineData(7, 9, 1, 6)]
