@@ -12,6 +12,11 @@ internal class Day05 : Problem<ulong>
         public ulong MaxSourceRange { get; } = SourceRangeStart + (RangeLength - 1);
 
         public ulong MaxDestinationRange { get; } = DestinationRangeStart + (RangeLength - 1);
+
+        public bool IsMatch(ulong source)
+        {
+            return source >= SourceRangeStart && source <= MaxSourceRange;
+        }
     }
 
     internal record Map(string Name, IList<Range> Ranges)
@@ -34,7 +39,7 @@ internal class Day05 : Problem<ulong>
 
         private Range? GetMatchingRange(ulong source)
         {
-            return Ranges.FirstOrDefault(r => source >= r.SourceRangeStart && source <= r.MaxSourceRange);
+            return Ranges.FirstOrDefault(r => r.IsMatch(source));
         }
     }
 
@@ -67,7 +72,7 @@ internal class Day05 : Problem<ulong>
         return locations.Min();
     }
 
-    public override async ValueTask<ulong> SolveFirstPartAsync()
+    public override async ValueTask<ulong> SolveFirstPartAsync(CancellationToken cancellationToken)
     {
         var inputs = await File.ReadAllLinesAsync(Path.Combine(Environment.CurrentDirectory, "2023", "D05", "input.txt"));
         var seeds = new List<ulong>();
@@ -115,7 +120,7 @@ internal class Day05 : Problem<ulong>
         return locations.Min();
     }
 
-    public override async ValueTask<ulong> SolveSecondPartAsync()
+    public override async ValueTask<ulong> SolveSecondPartAsync(CancellationToken cancellationToken)
     {
         var inputs = await File.ReadAllLinesAsync(Path.Combine(Environment.CurrentDirectory, "2023", "D05", "input.txt"));
         var seeds = new List<Seed>();
@@ -155,17 +160,22 @@ internal class Day05 : Problem<ulong>
         }
 
         var mutex = new object();
-        var location = ulong.MaxValue;
+        var locations = new Dictionary<int, ulong>(capacity: seeds.Count);
+
         Parallel.ForEach(seeds, seed =>
         {
+            if (cancellationToken.IsCancellationRequested) return;
+
             var count = seed.Length - 1;
 
             for (var j = 0UL; j <= count; j++)
             {
-                if (j == 0UL || j % 500_000UL == 0)
+                if (j == 0UL || j % 1_000_000UL == 0)
                 {
                     Console.WriteLine(
-                        $"Thread {Thread.CurrentThread.ManagedThreadId} - {seed.Id} - {j:n} / {count:n}");
+                        $"Thread {Environment.CurrentManagedThreadId} - {seed.Id} - {j:n} / {count:n}");
+
+                    if (cancellationToken.IsCancellationRequested) break;
                 }
 
                 var value = seed.Start + j;
@@ -174,13 +184,11 @@ internal class Day05 : Problem<ulong>
                     value = map.MapToDestination(value);
                 }
 
-                lock (mutex)
-                {
-                    if (value < location) location = value;
-                }
+                var location = locations.GetValueOrDefault(seed.Id);
+                if (value < location || location == 0UL) locations[seed.Id] = value;
             }
         });
 
-        return location;
+        return locations.Select(kvp => kvp.Value).Min();
     }
 }

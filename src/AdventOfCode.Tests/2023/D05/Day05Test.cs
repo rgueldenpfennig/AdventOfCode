@@ -10,7 +10,7 @@ public class Day05Test
     public async Task ShouldSolveFirstPart()
     {
         var sut = new Day05();
-        var result = await sut.SolveFirstPartAsync();
+        var result = await sut.SolveFirstPartAsync(CancellationToken.None);
 
         Assert.Equal(662_197_086UL, result);
     }
@@ -19,9 +19,9 @@ public class Day05Test
     public async Task ShouldSolveSecondPart()
     {
         var sut = new Day05();
-        var result = await sut.SolveSecondPartAsync();
+        var result = await sut.SolveSecondPartAsync(CancellationToken.None);
 
-        Assert.Equal(662_197_086UL, result);
+        Assert.Equal(52_510_809UL, result);
     }
 
     [Fact]

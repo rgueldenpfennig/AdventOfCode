@@ -2,12 +2,12 @@
 
 internal abstract class Problem<TResult>
 {
-    public virtual ValueTask<TResult> SolveFirstPartAsync()
+    public virtual ValueTask<TResult> SolveFirstPartAsync(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
-
-    public virtual ValueTask<TResult> SolveSecondPartAsync()
+    
+    public virtual ValueTask<TResult> SolveSecondPartAsync(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

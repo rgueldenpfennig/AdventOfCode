@@ -9,7 +9,7 @@ internal class Day04 : Problem<int>
         public int Count { get; set; } = 1;
     }
 
-    public override async ValueTask<int> SolveFirstPartAsync()
+    public override async ValueTask<int> SolveFirstPartAsync(CancellationToken cancellationToken)
     {
         var cards = await GetCardsFromInputAsync();
         var points = 0;
@@ -30,7 +30,7 @@ internal class Day04 : Problem<int>
         return points;
     }
 
-    public override async ValueTask<int> SolveSecondPartAsync()
+    public override async ValueTask<int> SolveSecondPartAsync(CancellationToken cancellationToken)
     {
         var cards = await GetCardsFromInputAsync();
         var index = 0;

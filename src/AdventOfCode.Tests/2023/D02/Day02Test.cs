@@ -17,7 +17,7 @@ public class Day02Test
     public async Task ShouldSolveSecondPart()
     {
         var sut = new Day02();
-        var result = await sut.SolveSecondPartAsync();
+        var result = await sut.SolveSecondPartAsync(CancellationToken.None);
 
         Assert.Equal(78_111, result);
     }
@@ -26,7 +26,7 @@ public class Day02Test
     public async Task ShouldSolveFirstPart()
     {
         var sut = new Day02();
-        var result = await sut.SolveFirstPartAsync();
+        var result = await sut.SolveFirstPartAsync(CancellationToken.None);
 
         Assert.Equal(2545, result);
     }

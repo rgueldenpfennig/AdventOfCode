@@ -2,8 +2,8 @@
 
 internal class Day03 : Problem<int>
 {
-    public override ValueTask<int> SolveFirstPartAsync()
+    public override ValueTask<int> SolveFirstPartAsync(CancellationToken cancellationToken)
     {
-        return base.SolveFirstPartAsync();
+        return base.SolveFirstPartAsync(cancellationToken);
     }
 }
