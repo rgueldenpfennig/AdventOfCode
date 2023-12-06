@@ -1,8 +1,12 @@
 ﻿
+using System.Diagnostics;
+
 namespace AdventOfCode.Y2023.D05;
 
 internal class Day05 : Problem<ulong>
 {
+    internal record Seed(int Id, ulong Start, ulong Length);
+
     internal record Range(ulong DestinationRangeStart, ulong SourceRangeStart, ulong RangeLength)
     {
         public ulong MaxSourceRange { get; } = SourceRangeStart + (RangeLength - 1);
@@ -109,5 +113,74 @@ internal class Day05 : Problem<ulong>
         }
 
         return locations.Min();
+    }
+
+    public override async ValueTask<ulong> SolveSecondPartAsync()
+    {
+        var inputs = await File.ReadAllLinesAsync(Path.Combine(Environment.CurrentDirectory, "2023", "D05", "input.txt"));
+        var seeds = new List<Seed>();
+        var maps = new List<Map>();
+
+        Map? currentMap = null;
+
+        foreach (var input in inputs)
+        {
+            if (string.IsNullOrEmpty(input)) continue;
+
+            if (input.StartsWith("seeds"))
+            {
+                var seedsRaw = input.Replace("seeds: ", string.Empty).Split(' ', StringSplitOptions.TrimEntries).Select(v => Convert.ToUInt64(v)).ToArray();
+                for (int i = 0; i <= seedsRaw.Length; i++)
+                {
+                    if ((i + 1) % 2 == 0)
+                    {
+                        // end of pair
+                        var start = seedsRaw[i - 1];
+                        var length = seedsRaw[i];
+                        seeds.Add(new Seed(seeds.Count + 1, start, length));
+                    }
+                }
+                continue;
+            }
+
+            if (input.Contains("map"))
+            {
+                currentMap = new Map(input.Split(' ')[0], new List<Range>());
+                maps.Add(currentMap);
+                continue;
+            }
+
+            var values = input.Split(' ', StringSplitOptions.TrimEntries).Select(v => Convert.ToUInt64(v)).ToArray();
+            currentMap!.Ranges.Add(new Range(values[0], values[1], values[2]));
+        }
+
+        var mutex = new object();
+        var location = ulong.MaxValue;
+        Parallel.ForEach(seeds, seed =>
+        {
+            var count = seed.Length - 1;
+
+            for (var j = 0UL; j <= count; j++)
+            {
+                if (j == 0UL || j % 500_000UL == 0)
+                {
+                    Console.WriteLine(
+                        $"Thread {Thread.CurrentThread.ManagedThreadId} - {seed.Id} - {j:n} / {count:n}");
+                }
+
+                var value = seed.Start + j;
+                foreach (var map in maps)
+                {
+                    value = map.MapToDestination(value);
+                }
+
+                lock (mutex)
+                {
+                    if (value < location) location = value;
+                }
+            }
+        });
+
+        return location;
     }
 }

@@ -1,4 +1,6 @@
-﻿using AdventOfCode.Y2023.D02;
+﻿using AdventOfCode.Y2023.D05;
 
-var problem = new Day02();
-await problem.SolveFirstPartAsync();
+var problem = new Day05();
+var result = await problem.SolveSecondPartAsync();
+
+Console.WriteLine(result);

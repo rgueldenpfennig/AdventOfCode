@@ -15,14 +15,14 @@ public class Day05Test
         Assert.Equal(662_197_086UL, result);
     }
 
-    //[Fact]
-    //public async Task ShouldSolveSecondPart()
-    //{
-    //    var sut = new Day04();
-    //    var result = await sut.SolveSecondPartAsync();
+    [Fact]
+    public async Task ShouldSolveSecondPart()
+    {
+        var sut = new Day05();
+        var result = await sut.SolveSecondPartAsync();
 
-    //    Assert.Equal(14_624_680, result);
-    //}
+        Assert.Equal(662_197_086UL, result);
+    }
 
     [Fact]
     public void ShouldSolveExample()
