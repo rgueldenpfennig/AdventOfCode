@@ -1,12 +1,14 @@
-﻿using System.Net.NetworkInformation;
+﻿namespace AdventOfCode.Y2023.D07;
 
-namespace AdventOfCode.Y2023.D07;
-
-internal class Day07 : Problem<int>
+public class Day07 : Problem<int>
 {
-    internal readonly record struct Card(char Label)
+    public static bool Part2Rules;
+
+    public readonly record struct Card(char Label)
     {
         public int Value { get; } = GetValueByLabel(Label);
+
+        public bool IsJoker { get; } = Part2Rules && Label == 'J';
 
         private static int GetValueByLabel(char label)
         {
@@ -17,7 +19,7 @@ internal class Day07 : Problem<int>
                     'A' => 14,
                     'K' => 13,
                     'Q' => 12,
-                    'J' => 11,
+                    'J' => Part2Rules ? 1 : 11,
                     'T' => 10,
                     _ => throw new InvalidOperationException(),
                 };
@@ -27,7 +29,7 @@ internal class Day07 : Problem<int>
         }
     }
 
-    internal struct Hand(Card[] cards, int bid)
+    public struct Hand(Card[] cards, int bid)
     {
         public Card[] Cards { get; } = cards;
 
@@ -39,27 +41,64 @@ internal class Day07 : Problem<int>
 
         private static HandType GetHandType(Card[] cards)
         {
-            var groups = cards.GroupBy(c => c).ToArray();
-            if (groups.Length == 1) return HandType.FiveOfAKind;
-            if (groups.Length == 5) return HandType.HighCard;
-            if (groups.Length == 4) return HandType.OnePair;
+            var cardsCopy = cards;
+            var counts = new Dictionary<Card, int>(capacity: cardsCopy.Length);
 
-            if (groups.Length == 3)
+            if (Part2Rules && cardsCopy.Any(c => c.IsJoker))
             {
-                if (groups.Any(g => g.Count() == 3))
+                cardsCopy = new Card[cardsCopy.Length];
+                Array.Copy(cards, cardsCopy, cards.Length);
+
+                var mostCard = cardsCopy.GroupBy(c => c).OrderByDescending(g => g.Count(c => !c.IsJoker)).Select(g => g.Key).First();
+                for (int i = 0; i < cardsCopy.Length; i++)
+                {
+                    var card = cardsCopy[i];
+                    if (card.IsJoker) cardsCopy[i] = mostCard;
+                }
+            }
+
+            foreach (var card in cardsCopy)
+            {
+                if (counts.ContainsKey(card))
+                {
+                    counts[card]++;
+                }
+                else
+                {
+                    counts[card] = 1;
+                }
+            }
+
+            if (counts.Count == 5)
+            {
+                return HandType.HighCard;
+            }
+
+            if (counts.Count == 4)
+            {
+                return HandType.OnePair;
+            }
+
+            if (counts.Count == 3)
+            {
+                if (counts.Any(kvp => kvp.Value == 3))
                     return HandType.ThreeOfAKind;
                 return HandType.TwoPair;
             }
 
-            if (groups.Length == 2)
+            if (counts.Count == 2)
             {
-                if (groups.Any(g => g.Count() == 4))
+                if (counts.Any(kvp => kvp.Value == 4))
                     return HandType.FourOfAKind;
-                if (groups.Any(g => g.Count() == 3) && groups.Any(g => g.Count() == 2))
-                    return HandType.FullHouse;
+                return HandType.FullHouse;
             }
 
-            return HandType.HighCard;
+            if (counts.Count == 1)
+            {
+                return HandType.FiveOfAKind;
+            }
+
+            throw new InvalidOperationException();
         }
 
         public override readonly string ToString()
@@ -68,7 +107,7 @@ internal class Day07 : Problem<int>
         }
     }
 
-    internal enum HandType
+    public enum HandType
     {
         FiveOfAKind = 7,
         FourOfAKind = 6,
@@ -128,6 +167,21 @@ internal class Day07 : Problem<int>
         return CalculateTotalWinnings(hands);
     }
 
+    public static Hand ParseHand(string input)
+    {
+        var values = input.Split(' ', StringSplitOptions.TrimEntries);
+        var cards = new Card[5];
+
+        int i = 0;
+        foreach (var character in values[0])
+        {
+            cards[i] = new Card(character);
+            i++;
+        }
+
+        return new Hand(cards, Convert.ToInt32(values[1]));
+    }
+
     public static async ValueTask<List<Hand>> ParseInputAsync()
     {
         var inputs = await File.ReadAllLinesAsync(Path.Combine(Environment.CurrentDirectory, "2023", "D07", "input.txt"));
@@ -135,17 +189,7 @@ internal class Day07 : Problem<int>
 
         foreach (var input in inputs)
         {
-            var values = input.Split(' ', StringSplitOptions.TrimEntries);
-            var cards = new Card[5];
-
-            int i = 0;
-            foreach (var character in values[0])
-            {
-                cards[i] = new Card(character);
-                i++;
-            }
-
-            hands.Add(new Hand(cards, Convert.ToInt32(values[1])));
+            hands.Add(ParseHand(input));
         }
 
         return hands;
@@ -166,7 +210,7 @@ internal class Day07 : Problem<int>
         return totalWinnings;
     }
 
-    internal class HandComparer : IComparer<Hand>
+    public class HandComparer : IComparer<Hand>
     {
         public int Compare(Hand x, Hand y)
         {

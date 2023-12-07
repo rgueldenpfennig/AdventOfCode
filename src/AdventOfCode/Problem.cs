@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode;
 
-internal abstract class Problem<TResult>
+public abstract class Problem<TResult>
 {
     public virtual ValueTask<TResult> SolveFirstPartAsync(CancellationToken cancellationToken)
     {
