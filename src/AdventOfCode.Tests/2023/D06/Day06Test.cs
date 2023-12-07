@@ -11,7 +11,7 @@ public class Day06Test
         var sut = new Day06();
         var result = sut.SolveExample();
 
-        Assert.Equal(288U, result);
+        Assert.Equal(288L, result);
     }
 
     [Fact]
@@ -20,7 +20,16 @@ public class Day06Test
         var sut = new Day06();
         var result = await sut.SolveFirstPartAsync(CancellationToken.None);
 
-        Assert.Equal(2_756_160U, result);
+        Assert.Equal(2_756_160L, result);
+    }
+
+    [Fact]
+    public async Task ShouldSolveSecondPart()
+    {
+        var sut = new Day06();
+        var result = await sut.SolveSecondPartAsync(CancellationToken.None);
+
+        Assert.Equal(34_788_142L, result);
     }
 
     [Theory]
