@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Y2023.D07;
+﻿using System.Net.NetworkInformation;
+
+namespace AdventOfCode.Y2023.D07;
 
 internal class Day07 : Problem<int>
 {
@@ -118,6 +120,35 @@ internal class Day07 : Problem<int>
         };
 
         return CalculateTotalWinnings(hands);
+    }
+
+    public override async ValueTask<int> SolveFirstPartAsync(CancellationToken cancellationToken)
+    {
+        var hands = await ParseInputAsync();
+        return CalculateTotalWinnings(hands);
+    }
+
+    public static async ValueTask<List<Hand>> ParseInputAsync()
+    {
+        var inputs = await File.ReadAllLinesAsync(Path.Combine(Environment.CurrentDirectory, "2023", "D07", "input.txt"));
+        var hands = new List<Hand>(capacity: inputs.Length);
+
+        foreach (var input in inputs)
+        {
+            var values = input.Split(' ', StringSplitOptions.TrimEntries);
+            var cards = new Card[5];
+
+            int i = 0;
+            foreach (var character in values[0])
+            {
+                cards[i] = new Card(character);
+                i++;
+            }
+
+            hands.Add(new Hand(cards, Convert.ToInt32(values[1])));
+        }
+
+        return hands;
     }
 
     public static int CalculateTotalWinnings(List<Hand> hands)
