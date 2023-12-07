@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Y2023.D03;
+﻿using System.Diagnostics;
+
+namespace AdventOfCode.Y2023.D03;
 
 internal class Day03 : Problem<int>
 {
@@ -25,16 +27,35 @@ internal class Day03 : Problem<int>
             """;
 
         var lines = input.Split('\n');
+        return CalculateSum(lines);
+    }
+
+    public override async ValueTask<int> SolveFirstPartAsync(CancellationToken cancellationToken)
+    {
+        var inputLines = await File.ReadAllLinesAsync(Path.Combine(Environment.CurrentDirectory, "2023", "D03", "input.txt"));
+        return CalculateSum(inputLines);
+    }
+
+    public static int CalculateSum(string[] lines)
+    {
         var (numbers, symbols) = ParseInput(lines);
 
         for (int i = 0; i < numbers.Count; i++)
         {
             var number = numbers[i];
-            var hasAdjacentSymbol = symbols.Exists(s =>
+            var adjacentSymbols = symbols.Where(s =>
                 (s.Line == number.Line || s.Line == number.Line - 1 || s.Line == number.Line + 1)
                 && s.Position >= number.Start - 1 && s.Position <= number.End + 1);
 
-            number.HasAdjacentSymbol = hasAdjacentSymbol;
+            var count = adjacentSymbols.Count();
+            if (count > 0)
+            {
+                number.HasAdjacentSymbol = true;
+            }
+            if (count > 1)
+            {
+                Debugger.Break();
+            }
         }
 
         return numbers.Where(n => n.HasAdjacentSymbol).Select(n => n.Value).Sum();
@@ -45,46 +66,44 @@ internal class Day03 : Problem<int>
         var numbers = new List<Number>();
         var symbols = new List<Symbol>();
 
-        var lineNumber = 1;
+        var lineNumber = 0;
         foreach (var line in lines)
         {
+            lineNumber++;
             var numberRaw = new List<char>();
-            for (int i = 0; i < line.Length; i++)
+            for (int i = 0; i <= line.Length; i++)
             {
-                var character = line[i];
-                if (character == '\r') continue;
-                if (character == '.')
+                char character;
+                if (i == line.Length)
                 {
-                    if (numberRaw.Count > 0)
-                    {
-                        numbers.Add(new Number(
-                            Convert.ToInt32(new string(numberRaw.ToArray())),
-                            lineNumber,
-                            i - numberRaw.Count,
-                            i - 1));
-                        numberRaw.Clear();
-                    }
-                    continue;
-                }
-
-                if (!char.IsNumber(character))
-                {
-                    symbols.Add(new(character, lineNumber, i));
+                    character = '.';
                 }
                 else
                 {
+                    character = line[i];
+                }
+
+                if ((character == '.' || !char.IsNumber(character)) && numberRaw.Count > 0)
+                {
+                    numbers.Add(new Number(
+                        Convert.ToInt32(new string(numberRaw.ToArray())),
+                        lineNumber,
+                        i - numberRaw.Count,
+                        i - 1));
+                    numberRaw.Clear();
+                }
+
+                if (char.IsNumber(character))
+                {
                     numberRaw.Add(character);
                 }
+                else if (character != '.')
+                {
+                    symbols.Add(new(character, lineNumber, i));
+                }
             }
-
-            lineNumber++;
         }
 
         return (numbers, symbols);
-    }
-
-    public override ValueTask<int> SolveFirstPartAsync(CancellationToken cancellationToken)
-    {
-        return base.SolveFirstPartAsync(cancellationToken);
     }
 }
