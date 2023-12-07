@@ -167,6 +167,12 @@ public class Day07 : Problem<int>
         return CalculateTotalWinnings(hands);
     }
 
+    public override async ValueTask<int> SolveSecondPartAsync(CancellationToken cancellationToken)
+    {
+        var hands = await ParseInputAsync();
+        return CalculateTotalWinnings(hands);
+    }
+
     public static Hand ParseHand(string input)
     {
         var values = input.Split(' ', StringSplitOptions.TrimEntries);

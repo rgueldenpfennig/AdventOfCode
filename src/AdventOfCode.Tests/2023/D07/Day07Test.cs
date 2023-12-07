@@ -34,6 +34,17 @@ public class Day07Test
         Assert.Equal(253_603_890, result);
     }
 
+    [Fact]
+    public async Task ShouldSolveSecondPart()
+    {
+        var sut = new Day07();
+        Part2Rules = true;
+        var result = await sut.SolveSecondPartAsync(CancellationToken.None);
+        Part2Rules = false;
+
+        Assert.Equal(253_630_098, result);
+    }
+
     [Theory]
     [InlineData("32T4K 1", HandType.HighCard)]
     [InlineData("32T3K 1", HandType.OnePair)]
