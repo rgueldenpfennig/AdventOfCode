@@ -19,4 +19,13 @@ public class Day03Test
 
         Assert.Equal(556_367, result);
     }
+
+    [Fact]
+    public async Task ShouldSolveSecondPart()
+    {
+        var sut = new Day03();
+        var result = await sut.SolveSecondPartAsync(CancellationToken.None);
+
+        Assert.Equal(89_471_771, result);
+    }
 }

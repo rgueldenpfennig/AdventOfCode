@@ -36,6 +36,12 @@ internal class Day03 : Problem<int>
         return CalculateSum(inputLines);
     }
 
+    public override async ValueTask<int> SolveSecondPartAsync(CancellationToken cancellationToken)
+    {
+        var inputLines = await File.ReadAllLinesAsync(Path.Combine(Environment.CurrentDirectory, "2023", "D03", "input.txt"));
+        return CalculateGearRatios(inputLines);
+    }
+
     public static int CalculateSum(string[] lines)
     {
         var (numbers, symbols) = ParseInput(lines);
@@ -52,13 +58,29 @@ internal class Day03 : Problem<int>
             {
                 number.HasAdjacentSymbol = true;
             }
-            if (count > 1)
-            {
-                Debugger.Break();
-            }
         }
 
         return numbers.Where(n => n.HasAdjacentSymbol).Select(n => n.Value).Sum();
+    }
+
+    public static int CalculateGearRatios(string[] lines)
+    {
+        var (numbers, symbols) = ParseInput(lines);
+
+        int result = 0;
+        foreach (var gear in symbols.Where(s => s.Value == '*'))
+        {
+            var adjacentNumbers = numbers.Where(n =>
+                (n.Line == gear.Line || n.Line == gear.Line - 1 || n.Line == gear.Line + 1)
+                && gear.Position >= n.Start - 1 && gear.Position <= n.End + 1);
+
+            if (adjacentNumbers.Count() == 2)
+            {
+                result += adjacentNumbers.Select(n => n.Value).Aggregate(1, (x, y) => x * y);
+            }
+        }
+
+        return result;
     }
 
     private static (List<Number>, List<Symbol>) ParseInput(string[] lines)
